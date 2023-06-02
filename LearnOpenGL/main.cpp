@@ -2,6 +2,7 @@
 #include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include "Shader.h"
 
 // 顶点数组
 GLfloat vertices[] = {
@@ -50,6 +51,8 @@ void processInput(GLFWwindow* window)
 
 int main()
 {
+	Shader testShader = Shader("vertexShaderSource.txt", "fragmentShaderSource.txt");
+
 	// 初始化GLFW
 	glfwInit();
 	// 配置GLFW，使用的版本为3.3，核心模式
