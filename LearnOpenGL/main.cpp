@@ -5,12 +5,12 @@
 
 // 顶点数组
 GLfloat vertices[] = {
-	-0.5f, -0.5f, 0.0f,
-	 0.5f, -0.5f, 0.0f,
-	 0.0f,  0.5f, 0.0f,
+	-0.5f, -0.5f, 0.0f, 1.0f, 0, 0, // 左下角
+	 0.5f, -0.5f, 0.0f, 0, 1.0f, 0, // 右下角
+	 0.0f,  0.5f, 0.0f, 0, 0, 1.0f, // 顶部
 	 /*0.5f, -0.5f, 0.0f,
 	 0.0f,  0.5f, 0.0f,*/
-	 0.8f,  0.8f, 0.0f
+	 0.8f,  0.8f, 0.0f, 1.0f, 0, 1.0f // 右上角
 };
 
 // 索引数组
@@ -22,11 +22,12 @@ unsigned int indices[] = { // 逆时针绘制为正面
 // 顶点着色器
 const char* vertexShaderSource =
 "#version 330 core \n " // 版本号
-"layout(location = 0) in vec3 position; \n " // 位置变量的属性位置值为0
+"layout(location = 6) in vec3 aPos; \n " // 位置变量的属性位置值为6
+"layout(location = 7) in vec3 aColor; \n " // 颜色变量的属性位置值为7
 "out vec4 vertexColor; \n " // 输出变量
 "void main(){ \n " // 主函数
-"	gl_Position = vec4(position.x, position.y, position.z, 1.0);\n" // gl_Position是一个vec4的输出变量，所以我们必须把vec3的position转换为vec4
-"	vertexColor = vec4(1.0, 1.0, 0, 1.0); \n" // 把输出变量设置为暗红色
+"	gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n" // gl_Position是一个vec4的输出变量，所以我们必须把vec3的position转换为vec4
+"	vertexColor = vec4(aColor.x, aColor.y, aColor.z, 1.0); \n" // 把输出变量设置为暗红色
 "}";
 
 // 片段着色器
@@ -36,7 +37,7 @@ const char* fragmentShaderSource =
 "uniform vec4 ourColor; \n" // uniform变量，用来从CPU中的应用程序发送数据到GPU的着色器程序中，使用uniform之前必须先设置它
 "out vec4 color; \n " // 输出变量
 "void main(){ \n " // 主函数
-"	color = ourColor;}"; // 把输出变量设置为输入变量的颜色值
+"	color = vertexColor;}"; // 把输出变量设置为输入变量的颜色值
 
 void processInput(GLFWwindow* window)
 {
@@ -126,8 +127,10 @@ int main()
 	glLinkProgram(shaderProgram);
 
 	// 设置顶点属性指针
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (GLvoid*)0); // 解析顶点数据
-	glEnableVertexAttribArray(0); // 启用顶点属性
+	glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)0); // 解析顶点数据
+	glEnableVertexAttribArray(6); // 启用顶点属性
+	glVertexAttribPointer(7, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)(3 * sizeof(float))); // 解析颜色数据
+	glEnableVertexAttribArray(7); // 启用顶点属性
 
 	while (!glfwWindowShouldClose(window)) // 每次循环的开始前检查一次GLFW是否被要求退出
 	{
