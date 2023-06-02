@@ -21,17 +21,22 @@ unsigned int indices[] = { // 逆时针绘制为正面
 
 // 顶点着色器
 const char* vertexShaderSource =
-"#version 330 core \n "
-"layout(location = 0) in vec3 position; \n "
-"void main(){ \n "
-"	gl_Position = vec4(position.x, position.y, position.z, 1.0);}";
+"#version 330 core \n " // 版本号
+"layout(location = 0) in vec3 position; \n " // 位置变量的属性位置值为0
+"out vec4 vertexColor; \n " // 输出变量
+"void main(){ \n " // 主函数
+"	gl_Position = vec4(position.x, position.y, position.z, 1.0);\n" // gl_Position是一个vec4的输出变量，所以我们必须把vec3的position转换为vec4
+"	vertexColor = vec4(1.0, 1.0, 0, 1.0); \n" // 把输出变量设置为暗红色
+"}";
 
 // 片段着色器
 const char* fragmentShaderSource =
-"#version 330 core \n "
-"out vec4 color; \n "
-"void main(){ \n "
-"	color = vec4(1.0f, 0.5f, 0.2f, 1.0f);}";
+"#version 330 core \n " // 版本号
+"in vec4 vertexColor; \n " // 输入变量
+"uniform vec4 ourColor; \n" // uniform变量，用来从CPU中的应用程序发送数据到GPU的着色器程序中，使用uniform之前必须先设置它
+"out vec4 color; \n " // 输出变量
+"void main(){ \n " // 主函数
+"	color = ourColor;}"; // 把输出变量设置为输入变量的颜色值
 
 void processInput(GLFWwindow* window)
 {
@@ -78,7 +83,7 @@ int main()
 	// glEnable(GL_CULL_FACE); // 启用面剔除
 	// glCullFace(GL_BACK); // 剔除背面
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // 设置绘制模式为线框模式
+	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // 设置绘制模式为线框模式
 
 	// 生成一个顶点数组对象(Vertex Array Object, VAO)
 	unsigned int VAO;
@@ -135,7 +140,15 @@ int main()
 
 		glBindVertexArray(VAO); // 绑定VAO
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); // 绑定EBO
+
+		float timeValue = glfwGetTime(); // 获取当前时间
+		float greenValue = (sin(timeValue) / 2.0f) + 0.5f; // 使颜色值在0.0f到1.0f之间
+		int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor"); // 获取uniform变量的位置值
+
 		glUseProgram(shaderProgram); // 使用着色器程序
+
+		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f); // 设置uniform变量的值
+
 		//glDrawArrays(GL_TRIANGLES, 0, 6); // 绘制三角形
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // 绘制三角形, 6个顶点, 索引类型, 偏移量
 
