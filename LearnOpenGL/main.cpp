@@ -8,9 +8,15 @@ GLfloat vertices[] = {
 	-0.5f, -0.5f, 0.0f,
 	 0.5f, -0.5f, 0.0f,
 	 0.0f,  0.5f, 0.0f,
-	 0.5f, -0.5f, 0.0f,
-	 0.0f,  0.5f, 0.0f,
+	 /*0.5f, -0.5f, 0.0f,
+	 0.0f,  0.5f, 0.0f,*/
 	 0.8f,  0.8f, 0.0f
+};
+
+// 索引数组
+unsigned int indices[] = { // 逆时针绘制为正面
+	0, 1, 2,
+	2, 1, 3
 };
 
 // 顶点着色器
@@ -40,36 +46,39 @@ int main()
 {
 	// 初始化GLFW
 	glfwInit();
-	// 配置GLFW
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	// 配置GLFW，使用的版本为3.3，核心模式
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // 主版本号
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); // 次版本号
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // 核心模式
 
 	// 创建glfw窗口
 	GLFWwindow* window = glfwCreateWindow(800, 600, "My OpenGL Game", NULL, NULL);
 	if (window == NULL)
 	{
 		printf("Create GLFW window failed!");
-		glfwTerminate(); // 终止
+		glfwTerminate(); // 终止GLFW
 		return -1;
 	}
 
 	glfwMakeContextCurrent(window); // 设置当前上下文
 
 	// 初始化glew
-	glewExperimental = true;
+	glewExperimental = true; // 让glew获取所有拓展函数
 
-	if (glewInit() != GLEW_OK)
+	if (glewInit() != GLEW_OK) // 初始化glew失败
 	{
 		printf("Init GLEW failed!");
-		glfwTerminate();
+		glfwTerminate(); // 终止GLFW
 		return -1;
 	}
-	// 设置窗口的维度
+	// 设置视窗位置、大小
 	glViewport(0, 0, 800, 600);
+
 	// 背面剔除
-	/*glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);*/
+	// glEnable(GL_CULL_FACE); // 启用面剔除
+	// glCullFace(GL_BACK); // 剔除背面
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // 设置绘制模式为线框模式
 
 	// 生成一个顶点数组对象(Vertex Array Object, VAO)
 	unsigned int VAO;
@@ -85,17 +94,22 @@ int main()
 	// 把用户定义的数据复制到当前绑定缓冲的函数
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+	unsigned int EBO; // 索引缓冲对象(Element Buffer Object, EBO)
+	glGenBuffers(1, &EBO); // 生成一个索引缓冲对象
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); // 把新创建的缓冲绑定到GL_ELEMENT_ARRAY_BUFFER目标上
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); // 把用户定义的数据复制到当前绑定缓冲的函数
+
 	// 创建顶点着色器
 	unsigned int vertexShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
+	vertexShader = glCreateShader(GL_VERTEX_SHADER); // 创建一个着色器对象
+	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL); // 把着色器源码附加到着色器对象上
+	glCompileShader(vertexShader); // 编译顶点着色器
 
 	// 创建片段着色器
 	unsigned int fragmentShader;
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
+	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER); // 创建一个着色器对象
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL); // 把着色器源码附加到着色器对象上
+	glCompileShader(fragmentShader); // 编译片段着色器
 
 	// 创建一个程序对象
 	unsigned int shaderProgram;
@@ -107,8 +121,8 @@ int main()
 	glLinkProgram(shaderProgram);
 
 	// 设置顶点属性指针
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (GLvoid*)0);
-	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (GLvoid*)0); // 解析顶点数据
+	glEnableVertexAttribArray(0); // 启用顶点属性
 
 	while (!glfwWindowShouldClose(window)) // 每次循环的开始前检查一次GLFW是否被要求退出
 	{
@@ -119,9 +133,11 @@ int main()
 		// 清除颜色缓冲
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glBindVertexArray(VAO);
-		glUseProgram(shaderProgram);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindVertexArray(VAO); // 绑定VAO
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); // 绑定EBO
+		glUseProgram(shaderProgram); // 使用着色器程序
+		//glDrawArrays(GL_TRIANGLES, 0, 6); // 绘制三角形
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // 绘制三角形, 6个顶点, 索引类型, 偏移量
 
 		// 交换颜色缓冲
 		glfwSwapBuffers(window);
