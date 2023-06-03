@@ -12,11 +12,13 @@ public:
 	Shader(const char* veretexPath, const char* fragmentPath);
 	void use();
 
+public:
+	unsigned int id;
+
 private:
 	std::string vertexString;
 	std::string fragmentString;
 	const char* vertexSource;
 	const char* fragmentSource;
-	unsigned int id;
 };
 

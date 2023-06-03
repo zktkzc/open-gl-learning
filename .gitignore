@@ -5,3 +5,5 @@ Debug
 *.vsidx
 .suo
 *.VC.db
+/.vs/LearnOpenGL/v17/.suo
+/.vs/LearnOpenGL/v17/Browse.VC.db

@@ -1,23 +1,24 @@
 #define GLEW_STATIC
+#define STB_IMAGE_IMPLEMENTATION
 #include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "Shader.h"
+#include "stb_image.h"
 
 // 顶点数组
 GLfloat vertices[] = {
-	-0.5f, -0.5f, 0.0f, 1.0f, 0, 0, // 左下角
-	 0.5f, -0.5f, 0.0f, 0, 1.0f, 0, // 右下角
-	 0.0f,  0.5f, 0.0f, 0, 0, 1.0f, // 顶部
-	 /*0.5f, -0.5f, 0.0f,
-	 0.0f,  0.5f, 0.0f,*/
-	 0.8f,  0.8f, 0.0f, 1.0f, 0, 1.0f // 右上角
+	//     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
+		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // 右上
+		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // 右下
+		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // 左下
+		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // 左上
 };
 
 // 索引数组
 unsigned int indices[] = { // 逆时针绘制为正面
 	0, 1, 2,
-	2, 1, 3
+	2, 3, 0
 };
 
 void processInput(GLFWwindow* window)
@@ -89,10 +90,66 @@ int main()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); // 把用户定义的数据复制到当前绑定缓冲的函数
 
 	// 设置顶点属性指针
-	glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)0); // 解析顶点数据
+	glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (GLvoid*)0); // 解析顶点数据
 	glEnableVertexAttribArray(6); // 启用顶点属性
-	glVertexAttribPointer(7, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)(3 * sizeof(float))); // 解析颜色数据
+	glVertexAttribPointer(7, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (GLvoid*)(3 * sizeof(float))); // 解析颜色数据
 	glEnableVertexAttribArray(7); // 启用顶点属性
+	glVertexAttribPointer(8, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (GLvoid*)(6 * sizeof(float))); // 解析纹理坐标数据
+	glEnableVertexAttribArray(8); // 启用顶点属性
+
+	// 纹理
+	unsigned int TexBufferA;
+	glGenTextures(1, &TexBufferA); // 生成纹理
+	glActiveTexture(GL_TEXTURE0); // 激活纹理单元
+	glBindTexture(GL_TEXTURE_2D, TexBufferA); // 绑定纹理
+	// 设置纹理环绕方式
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // 设置S轴环绕方式
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // 设置T轴环绕方式
+	// 设置纹理过滤方式
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // 设置缩小过滤方式
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // 设置放大过滤方式
+
+	// 加载并生成纹理
+	int width, height, nrChannels;
+	stbi_set_flip_vertically_on_load(true); // 翻转图片
+	unsigned char* data = stbi_load("container.jpg", &width, &height, &nrChannels, 0); // 加载图片
+	if (data)
+	{
+		// 生成纹理
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data); // 生成纹理
+		glGenerateMipmap(GL_TEXTURE_2D); // 为当前绑定的纹理自动生成所有需要的多级渐远纹理
+	}
+	else
+	{
+		printf("Failed to load texture!");
+	}
+	stbi_image_free(data); // 释放图像的内存
+
+	unsigned int TexBufferB;
+	glGenTextures(1, &TexBufferB); // 生成纹理
+	glActiveTexture(GL_TEXTURE3); // 激活纹理单元
+	glBindTexture(GL_TEXTURE_2D, TexBufferB); // 绑定纹理
+
+	// 设置纹理环绕方式
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT); // 设置S轴环绕方式
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT); // 设置T轴环绕方式
+	// 设置纹理过滤方式
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // 设置缩小过滤方式
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // 设置放大过滤方式
+
+	// 加载并生成纹理
+	data = stbi_load("awesomeface.png", &width, &height, &nrChannels, 0); // 加载图片
+	if (data)
+	{
+		// 生成纹理
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data); // 生成纹理
+		glGenerateMipmap(GL_TEXTURE_2D); // 为当前绑定的纹理自动生成所有需要的多级渐远纹理
+	}
+	else
+	{
+		printf("Failed to load texture!");
+	}
+	stbi_image_free(data); // 释放图像的内存
 
 	while (!glfwWindowShouldClose(window)) // 每次循环的开始前检查一次GLFW是否被要求退出
 	{
@@ -103,10 +160,17 @@ int main()
 		// 清除颜色缓冲
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		glActiveTexture(GL_TEXTURE0); // 激活纹理单元
+		glBindTexture(GL_TEXTURE_2D, TexBufferA); // 绑定纹理
+		glActiveTexture(GL_TEXTURE3); // 激活纹理单元
+		glBindTexture(GL_TEXTURE_2D, TexBufferB); // 绑定纹理
 		glBindVertexArray(VAO); // 绑定VAO
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); // 绑定EBO
 
 		myShader->use(); // 使用着色器程序
+
+		glUniform1i(glGetUniformLocation(myShader->id, "ourTexture"), 0); // 手动设置纹理单元
+		glUniform1i(glGetUniformLocation(myShader->id, "ourFace"), 3); // 手动设置纹理单元
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // 绘制三角形, 6个顶点, 索引类型, 偏移量
 
