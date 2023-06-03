@@ -154,12 +154,22 @@ int main()
 	}
 	stbi_image_free(data); // 释放图像的内存
 
+	glm::mat4 trans; // 创建一个四维数组
+	// trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0)); // 位移
+	// trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0, 0, 1.0f)); // 旋转
+	// trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f)); // 缩放
+
+	glm::mat4 modelMat; // 模型矩阵
+	modelMat = glm::rotate(modelMat, glm::radians(-55.0f), glm::vec3(1.0f, 0, 0)); // 旋转
+
+	glm::mat4 viewMat; // 观察矩阵
+	viewMat = glm::translate(viewMat, glm::vec3(0.0f, 0.0f, -3.0f)); // 位移
+
+	glm::mat4 projectionMat; // 投影矩阵
+	projectionMat = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f); // 透视投影
+
 	while (!glfwWindowShouldClose(window)) // 每次循环的开始前检查一次GLFW是否被要求退出
 	{
-		glm::mat4 trans; // 创建一个四维数组
-		trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0)); // 位移
-		trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0, 0, 1.0f)); // 旋转
-		// trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f)); // 缩放
 		processInput(window);
 
 		// 清除颜色缓冲之后，整个颜色缓冲都会被填充为glClearColor里所设置的颜色
@@ -178,7 +188,10 @@ int main()
 
 		glUniform1i(glGetUniformLocation(myShader->id, "ourTexture"), 0); // 手动设置纹理单元
 		glUniform1i(glGetUniformLocation(myShader->id, "ourFace"), 3); // 手动设置纹理单元
-		glUniformMatrix4fv(glGetUniformLocation(myShader->id, "transform"), 1, GL_FALSE, glm::value_ptr(trans)); // 手动设置纹理单元
+		// glUniformMatrix4fv(glGetUniformLocation(myShader->id, "transform"), 1, GL_FALSE, glm::value_ptr(trans)); // 手动设置纹理单元
+		glUniformMatrix4fv(glGetUniformLocation(myShader->id, "modelMat"), 1, GL_FALSE, glm::value_ptr(modelMat)); // 手动设置纹理单元
+		glUniformMatrix4fv(glGetUniformLocation(myShader->id, "viewMat"), 1, GL_FALSE, glm::value_ptr(viewMat)); // 手动设置纹理单元
+		glUniformMatrix4fv(glGetUniformLocation(myShader->id, "projectionMat"), 1, GL_FALSE, glm::value_ptr(projectionMat)); // 手动设置纹理单元
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // 绘制三角形, 6个顶点, 索引类型, 偏移量
 
