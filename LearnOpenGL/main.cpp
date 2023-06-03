@@ -60,6 +60,20 @@ unsigned int indices[] = { // 逆时针绘制为正面
 	2, 3, 0
 };
 
+// 多个立方体位置向量
+glm::vec3 cubePositions[] = {
+  glm::vec3(0.0f,  0.0f,  0.0f),
+  glm::vec3(2.0f,  5.0f, -15.0f),
+  glm::vec3(-1.5f, -2.2f, -2.5f),
+  glm::vec3(-3.8f, -2.0f, -12.3f),
+  glm::vec3(2.4f, -0.4f, -3.5f),
+  glm::vec3(-1.7f,  3.0f, -7.5f),
+  glm::vec3(1.3f, -2.0f, -2.5f),
+  glm::vec3(1.5f,  2.0f, -2.5f),
+  glm::vec3(1.5f,  0.2f, -1.5f),
+  glm::vec3(-1.3f,  1.0f, -1.5f)
+};
+
 void processInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) // 如果按下Esc键
@@ -220,19 +234,25 @@ int main()
 		glActiveTexture(GL_TEXTURE3); // 激活纹理单元
 		glBindTexture(GL_TEXTURE_2D, TexBufferB); // 绑定纹理
 		glBindVertexArray(VAO); // 绑定VAO
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); // 绑定EBO
+		// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); // 绑定EBO
 
-		myShader->use(); // 使用着色器程序
+		for (int i = 0; i < 10; i++)
+		{
+			glm::mat4 modelMat2; // 模型矩阵
+			modelMat2 = glm::translate(modelMat2, cubePositions[i]); // 位移
 
-		glUniform1i(glGetUniformLocation(myShader->id, "ourTexture"), 0); // 手动设置纹理单元
-		glUniform1i(glGetUniformLocation(myShader->id, "ourFace"), 3); // 手动设置纹理单元
-		// glUniformMatrix4fv(glGetUniformLocation(myShader->id, "transform"), 1, GL_FALSE, glm::value_ptr(trans)); // 手动设置纹理单元
-		glUniformMatrix4fv(glGetUniformLocation(myShader->id, "modelMat"), 1, GL_FALSE, glm::value_ptr(modelMat)); // 手动设置纹理单元
-		glUniformMatrix4fv(glGetUniformLocation(myShader->id, "viewMat"), 1, GL_FALSE, glm::value_ptr(viewMat)); // 手动设置纹理单元
-		glUniformMatrix4fv(glGetUniformLocation(myShader->id, "projectionMat"), 1, GL_FALSE, glm::value_ptr(projectionMat)); // 手动设置纹理单元
+			myShader->use(); // 使用着色器程序
 
-		// glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // 绘制三角形, 6个顶点, 索引类型, 偏移量
-		glDrawArrays(GL_TRIANGLES, 0, 36); // 绘制立方体, 36个顶点
+			glUniform1i(glGetUniformLocation(myShader->id, "ourTexture"), 0); // 手动设置纹理单元
+			glUniform1i(glGetUniformLocation(myShader->id, "ourFace"), 3); // 手动设置纹理单元
+			// glUniformMatrix4fv(glGetUniformLocation(myShader->id, "transform"), 1, GL_FALSE, glm::value_ptr(trans)); // 手动设置纹理单元
+			glUniformMatrix4fv(glGetUniformLocation(myShader->id, "modelMat"), 1, GL_FALSE, glm::value_ptr(modelMat2)); // 手动设置纹理单元
+			glUniformMatrix4fv(glGetUniformLocation(myShader->id, "viewMat"), 1, GL_FALSE, glm::value_ptr(viewMat)); // 手动设置纹理单元
+			glUniformMatrix4fv(glGetUniformLocation(myShader->id, "projectionMat"), 1, GL_FALSE, glm::value_ptr(projectionMat)); // 手动设置纹理单元
+
+			// glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // 绘制三角形, 6个顶点, 索引类型, 偏移量
+			glDrawArrays(GL_TRIANGLES, 0, 36); // 绘制立方体, 36个顶点
+		}
 
 		// 交换颜色缓冲
 		glfwSwapBuffers(window);
