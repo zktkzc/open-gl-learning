@@ -110,7 +110,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Environment\OpenGL\glew-2.2.0\include;D:\Environment\OpenGL\glfw-3.3.8.bin.WIN64\include;D:\Environment\OpenGL\glfw-3.3.8.bin.WIN64\include;D:\Environment\OpenGL\glew-2.2.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Environment\OpenGL\glm-0.9.8.5\glm;D:\Environment\OpenGL\glew-2.2.0\include;D:\Environment\OpenGL\glfw-3.3.8.bin.WIN64\include;D:\Environment\OpenGL\glfw-3.3.8.bin.WIN64\include;D:\Environment\OpenGL\glew-2.2.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,7 +127,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Environment\OpenGL\glew-2.2.0\include;D:\Environment\OpenGL\glfw-3.3.8.bin.WIN64\include;E:\Environment\OpenGL\glfw-3.3.8.bin.WIN32\include;E:\Environment\OpenGL\glew-2.2.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Environment\OpenGL\glm-0.9.8.5\glm;D:\Environment\OpenGL\glew-2.2.0\include;D:\Environment\OpenGL\glfw-3.3.8.bin.WIN64\include;E:\Environment\OpenGL\glfw-3.3.8.bin.WIN32\include;E:\Environment\OpenGL\glew-2.2.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

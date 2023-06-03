@@ -5,6 +5,9 @@
 #include <GLFW/glfw3.h>
 #include "Shader.h"
 #include "stb_image.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // 顶点数组
 GLfloat vertices[] = {
@@ -153,6 +156,10 @@ int main()
 
 	while (!glfwWindowShouldClose(window)) // 每次循环的开始前检查一次GLFW是否被要求退出
 	{
+		glm::mat4 trans; // 创建一个四维数组
+		trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0)); // 位移
+		trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0, 0, 1.0f)); // 旋转
+		// trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f)); // 缩放
 		processInput(window);
 
 		// 清除颜色缓冲之后，整个颜色缓冲都会被填充为glClearColor里所设置的颜色
@@ -171,6 +178,7 @@ int main()
 
 		glUniform1i(glGetUniformLocation(myShader->id, "ourTexture"), 0); // 手动设置纹理单元
 		glUniform1i(glGetUniformLocation(myShader->id, "ourFace"), 3); // 手动设置纹理单元
+		glUniformMatrix4fv(glGetUniformLocation(myShader->id, "transform"), 1, GL_FALSE, glm::value_ptr(trans)); // 手动设置纹理单元
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // 绘制三角形, 6个顶点, 索引类型, 偏移量
 
