@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "Camera.h"
 
 // 顶点数组
 float vertices[] = {
@@ -54,6 +55,13 @@ float vertices[] = {
 	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
+float lastX; // 鼠标上一帧X位置
+float lastY; // 鼠标上一帧Y位置
+bool firstMouse = false; // 是否是第一次鼠标进入窗口
+
+// Camera camera(glm::vec3(0, 0, 3.0f), glm::vec3(0, 0, 0), glm::vec3(0, 1.0f, 0)); // 创建一个摄像机
+Camera camera(glm::vec3(0, 0, 3.0f), 15.0f, 180.0f, glm::vec3(0, 1.0f, 0)); // 创建一个摄像机
+
 // 索引数组
 unsigned int indices[] = { // 逆时针绘制为正面
 	0, 1, 2,
@@ -81,6 +89,32 @@ void processInput(GLFWwindow* window)
 		// 设定WindowShouldClose属性为true从而关闭GLFW
 		glfwSetWindowShouldClose(window, true);
 	}
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		camera.speedZ = 1.0f;
+	else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		camera.speedZ = -1.0f;
+	else
+		camera.speedZ = 0;
+}
+
+// 鼠标移动回调函数
+void mouse_callback(GLFWwindow* window, double xPos, double yPos)
+{
+	if (firstMouse) // 如果是第一次鼠标进入窗口, 则跳过第一次，防止deltaX和deltaY差值过大
+	{
+		lastX = xPos; // 更新鼠标上一帧X位置
+		lastY = yPos; // 更新鼠标上一帧Y位置
+		firstMouse = false; // 设定为false
+	}
+
+	float deltaX, deltaY; // 鼠标位置变化量
+	deltaX = xPos - lastX; // 计算鼠标X位置变化量
+	deltaY = yPos - lastY; // 计算鼠标Y位置变化量
+
+	lastX = xPos; // 更新鼠标上一帧X位置
+	lastY = yPos; // 更新鼠标上一帧Y位置
+
+	camera.ProcessMouseMovement(deltaX, deltaY); // 处理鼠标移动
 }
 
 int main()
@@ -102,6 +136,8 @@ int main()
 	}
 
 	glfwMakeContextCurrent(window); // 设置当前上下文
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // 隐藏光标
+	glfwSetCursorPosCallback(window, mouse_callback); // 鼠标移动回调函数
 
 	// 初始化glew
 	glewExperimental = true; // 让glew获取所有拓展函数
@@ -215,7 +251,8 @@ int main()
 	modelMat = glm::rotate(modelMat, glm::radians(-55.0f), glm::vec3(1.0f, 0, 0)); // 旋转
 
 	glm::mat4 viewMat; // 观察矩阵
-	viewMat = glm::translate(viewMat, glm::vec3(0.0f, 0.0f, -3.0f)); // 位移
+	// viewMat = glm::translate(viewMat, glm::vec3(0.0f, 0.0f, -3.0f)); // 位移
+	// viewMat = camera.GetViewMatrix(); // 获取观察矩阵
 
 	glm::mat4 projectionMat; // 投影矩阵
 	projectionMat = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f); // 透视投影
@@ -235,6 +272,8 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, TexBufferB); // 绑定纹理
 		glBindVertexArray(VAO); // 绑定VAO
 		// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); // 绑定EBO
+
+		viewMat = camera.GetViewMatrix(); // 获取观察矩阵
 
 		for (int i = 0; i < 10; i++)
 		{
@@ -258,6 +297,7 @@ int main()
 		glfwSwapBuffers(window);
 		// 检查有没有触发什么事件（比如键盘输入、鼠标移动等），然后调用对应的回调函数（可以通过回调方法手动设置）
 		glfwPollEvents();
+		camera.UpdateCameraPosition();
 	}
 
 	// 释放GLFW分配的内存
