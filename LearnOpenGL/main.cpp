@@ -257,6 +257,8 @@ int main()
 			glUniformMatrix4fv(glGetUniformLocation(myShader->id, "modelMat"), 1, GL_FALSE, glm::value_ptr(modelMat)); // 手动设置纹理单元
 			glUniformMatrix4fv(glGetUniformLocation(myShader->id, "viewMat"), 1, GL_FALSE, glm::value_ptr(viewMat)); // 手动设置纹理单元
 			glUniformMatrix4fv(glGetUniformLocation(myShader->id, "projectionMat"), 1, GL_FALSE, glm::value_ptr(projectionMat)); // 手动设置纹理单元
+			glUniform3f(glGetUniformLocation(myShader->id, "objColor"), 1.0f, 0.5f, 0.31f); // 手动设置纹理单元
+			glUniform3f(glGetUniformLocation(myShader->id, "ambientColor"), 1.0f, 1.0f, 1.0f); // 手动设置纹理单元
 
 			glBindVertexArray(VAO); // 绑定VAO
 
@@ -267,7 +269,7 @@ int main()
 		glfwSwapBuffers(window);
 		// 检查有没有触发什么事件（比如键盘输入、鼠标移动等），然后调用对应的回调函数（可以通过回调方法手动设置）
 		glfwPollEvents();
-		camera.UpdateCameraPosition();
+		camera.UpdateCameraPosition(); // 更新摄像机位置
 	}
 #pragma endregion
 
