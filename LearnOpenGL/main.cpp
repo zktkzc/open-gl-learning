@@ -10,6 +10,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Camera.h"
 #include "Material.h"
+#include "LightDirectional.h"
 
 #pragma region 模型数据
 // 顶点数组
@@ -75,6 +76,14 @@ glm::vec3 cubePositions[] = {
 
 #pragma region 创建摄像机
 Camera camera(glm::vec3(0, 0, 3.0f), 15.0f, 180.0f, glm::vec3(0, 1.0f, 0)); // 创建一个摄像机
+#pragma endregion
+
+#pragma region 创建光源
+LightDirectional light = LightDirectional(
+	glm::vec3(10.0f, 10.0f, -5.0f),
+	glm::vec3(glm::radians(45.0f), glm::radians(45.0f), 0),
+	glm::vec3(1.0f, 0, 0)
+); // 创建一个平行光
 #pragma endregion
 
 #pragma region 处理键盘和鼠标输入
@@ -286,8 +295,9 @@ int main()
 			glUniformMatrix4fv(glGetUniformLocation(myShader->id, "projectionMat"), 1, GL_FALSE, glm::value_ptr(projectionMat)); // 手动设置纹理单元
 			glUniform3f(glGetUniformLocation(myShader->id, "objColor"), 1.0f, 1.0f, 1.0f); // 手动设置纹理单元
 			glUniform3f(glGetUniformLocation(myShader->id, "ambientColor"), 0.3f, 0.3f, 0.3f); // 手动设置纹理单元
-			glUniform3f(glGetUniformLocation(myShader->id, "lightPos"), 10.0f, 10.0f, -5.0f); // 手动设置纹理单元
-			glUniform3f(glGetUniformLocation(myShader->id, "lightColor"), 1.0f, 1.0f, 1.0f); // 手动设置纹理单元
+			glUniform3f(glGetUniformLocation(myShader->id, "lightPos"), light.position.x, light.position.y, light.position.z); // 手动设置纹理单元
+			glUniform3f(glGetUniformLocation(myShader->id, "lightColor"), light.color.x, light.color.y, light.color.z); // 手动设置纹理单元
+			glUniform3f(glGetUniformLocation(myShader->id, "lightDir"), light.direction.x, light.direction.y, light.direction.z); // 手动设置纹理单元
 			glUniform3f(glGetUniformLocation(myShader->id, "cameraPos"), camera.Position.x, camera.Position.y, camera.Position.z); // 手动设置纹理单元
 
 			myMaterial->shader->SetUniform3f("material.ambient", myMaterial->ambient);
