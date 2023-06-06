@@ -22,6 +22,8 @@ public:
 	float Yaw; // 偏航角
 	float SenseX = 0.01f; // 鼠标灵敏度
 	float SenseY = 0.01f; // 鼠标灵敏度
+	float speedX = 0; // 摄像机左右移动速度
+	float speedY = 0; // 摄像机上下移动速度
 	float speedZ = 0; // 摄像机前后移动速度
 
 private:

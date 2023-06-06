@@ -5,7 +5,7 @@ Camera::Camera(glm::vec3 position, glm::vec3 target, glm::vec3 worldUp)
 	position = position; // 摄像机位置向量
 	Forward = glm::normalize(target - position); // 转化为单位向量，即方向向量，由目标点和摄像机位置向量相减得到
 	Right = glm::normalize(glm::cross(Forward, worldUp)); // 右向量,由世界坐标系的上向量和前向量叉乘得到
-	Up = glm::normalize(glm::cross(Forward, Right)); // 上向量，由右向量和前向量叉乘得到
+	Up = glm::normalize(glm::cross(Right, Forward)); // 上向量，由右向量和前向量叉乘得到
 	WorldUp = worldUp; // 世界坐标系的上向量
 }
 
@@ -19,7 +19,7 @@ Camera::Camera(glm::vec3 position, float pitch, float yaw, glm::vec3 worldUp)
 	Forward.y = glm::sin(glm::radians(Pitch)); // 由俯仰角计算前向量的y分量
 	Forward.z = glm::cos(glm::radians(Pitch)) * glm::cos(glm::radians(Yaw)); // 由俯仰角和偏航角计算前向量的z分量
 	Right = glm::normalize(glm::cross(Forward, worldUp)); // 右向量,由世界坐标系的上向量和前向量叉乘得到
-	Up = glm::normalize(glm::cross(Forward, Right)); // 上向量，由右向量和前向量叉乘得到
+	Up = glm::normalize(glm::cross(Right, Forward)); // 上向量，由右向量和前向量叉乘得到
 }
 
 Camera::~Camera()
@@ -46,7 +46,7 @@ void Camera::ProcessMouseMovement(float deltaX, float deltaY)
 // 更新摄像机位置向量
 void Camera::UpdateCameraPosition()
 {
-	Position += Forward * speedZ * 0.1f; // 摄像机位置向量加上前向量乘以速度
+	Position += Forward * speedZ * 0.01f + Right * speedX * 0.01f + Up * speedY * 0.01f;
 }
 
 // 由于摄像机的位置向量和目标点向量是一一对应的，所以只要更新摄像机位置向量就可以了
@@ -56,5 +56,5 @@ void Camera::UpdateCameraVectors()
 	Forward.y = glm::sin(glm::radians(Pitch)); // 由俯仰角计算前向量的y分量
 	Forward.z = glm::cos(glm::radians(Pitch)) * glm::cos(glm::radians(Yaw)); // 由俯仰角和偏航角计算前向量的z分量
 	Right = glm::normalize(glm::cross(Forward, WorldUp)); // 右向量,由世界坐标系的上向量和前向量叉乘得到
-	Up = glm::normalize(glm::cross(Forward, Right)); // 上向量，由右向量和前向量叉乘得到
+	Up = glm::normalize(glm::cross(Right, Forward)); // 上向量，由右向量和前向量叉乘得到
 }

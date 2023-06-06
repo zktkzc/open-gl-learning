@@ -88,12 +88,27 @@ void processInput(GLFWwindow* window)
 		// 设定WindowShouldClose属性为true从而关闭GLFW
 		glfwSetWindowShouldClose(window, true);
 	}
+
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		camera.speedZ = 1.0f;
 	else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		camera.speedZ = -1.0f;
 	else
 		camera.speedZ = 0;
+
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		camera.speedX = 1.0f;
+	else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		camera.speedX = -1.0f;
+	else
+		camera.speedX = 0;
+
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		camera.speedY = -1.0f;
+	else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+		camera.speedY = 1.0f;
+	else
+		camera.speedY = 0;
 }
 
 // 鼠标移动回调函数
@@ -259,10 +274,11 @@ int main()
 			glUniformMatrix4fv(glGetUniformLocation(myShader->id, "modelMat"), 1, GL_FALSE, glm::value_ptr(modelMat)); // 手动设置纹理单元
 			glUniformMatrix4fv(glGetUniformLocation(myShader->id, "viewMat"), 1, GL_FALSE, glm::value_ptr(viewMat)); // 手动设置纹理单元
 			glUniformMatrix4fv(glGetUniformLocation(myShader->id, "projectionMat"), 1, GL_FALSE, glm::value_ptr(projectionMat)); // 手动设置纹理单元
-			glUniform3f(glGetUniformLocation(myShader->id, "objColor"), 1.0f, 0.5f, 0.31f); // 手动设置纹理单元
-			glUniform3f(glGetUniformLocation(myShader->id, "ambientColor"), 1.0f, 1.0f, 1.0f); // 手动设置纹理单元
-			glUniform3f(glGetUniformLocation(myShader->id, "lightPos"), 10.0f, 10.0f, 5.0f); // 手动设置纹理单元
+			glUniform3f(glGetUniformLocation(myShader->id, "objColor"), 1.0f, 0.5f, 0.3f); // 手动设置纹理单元
+			glUniform3f(glGetUniformLocation(myShader->id, "ambientColor"), 0.2f, 0.1f, 0.0f); // 手动设置纹理单元
+			glUniform3f(glGetUniformLocation(myShader->id, "lightPos"), 10.0f, 10.0f, -5.0f); // 手动设置纹理单元
 			glUniform3f(glGetUniformLocation(myShader->id, "lightColor"), 1.0f, 1.0f, 1.0f); // 手动设置纹理单元
+			glUniform3f(glGetUniformLocation(myShader->id, "cameraPos"), camera.Position.x, camera.Position.y, camera.Position.z); // 手动设置纹理单元
 
 			glBindVertexArray(VAO); // 绑定VAO
 
