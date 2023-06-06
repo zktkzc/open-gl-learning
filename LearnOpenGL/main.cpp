@@ -211,10 +211,10 @@ int main()
 #pragma region 创建材质
 	Material* myMaterial = new Material(
 		myShader,
-		LoadImageToGPU("container2.png", GL_RGBA, GL_RGBA, 0),
+		LoadImageToGPU("container2.png", GL_RGBA, GL_RGBA, Shader::DIFFUSE),
+		LoadImageToGPU("container2_specular.png", GL_RGBA, GL_RGBA, Shader::SPECULAR),
 		glm::vec3(1.0f, 1.0f, 1.0f),
-		glm::vec3(1.0f, 1.0f, 1.0f),
-		32.0f
+		64.0f
 	);
 #pragma endregion
 
@@ -274,10 +274,10 @@ int main()
 
 			myShader->use(); // 使用着色器程序
 
-			// glActiveTexture(GL_TEXTURE0); // 激活纹理单元
-			// glBindTexture(GL_TEXTURE_2D, TexBufferA); // 绑定纹理
-			// glActiveTexture(GL_TEXTURE3); // 激活纹理单元
-			// glBindTexture(GL_TEXTURE_2D, TexBufferB); // 绑定纹理
+			glActiveTexture(GL_TEXTURE0); // 激活纹理单元
+			glBindTexture(GL_TEXTURE_2D, myMaterial->diffuse); // 绑定纹理
+			glActiveTexture(GL_TEXTURE0 + Shader::SPECULAR); // 激活纹理单元
+			glBindTexture(GL_TEXTURE_2D, myMaterial->specular); // 绑定纹理
 
 			// glUniform1i(glGetUniformLocation(myShader->id, "ourTexture"), 0); // 手动设置纹理单元
 			// glUniform1i(glGetUniformLocation(myShader->id, "ourFace"), 3); // 手动设置纹理单元
@@ -292,8 +292,9 @@ int main()
 
 			myMaterial->shader->SetUniform3f("material.ambient", myMaterial->ambient);
 			//myMaterial->shader->SetUniform3f("material.diffuse", myMaterial->diffuse);
-			myMaterial->shader->SetUniform1i("material.diffuse", 0);
-			myMaterial->shader->SetUniform3f("material.specular", myMaterial->specular);
+			//myMaterial->shader->SetUniform3f("material.specular", myMaterial->specular);
+			myMaterial->shader->SetUniform1i("material.diffuse", Shader::DIFFUSE);
+			myMaterial->shader->SetUniform1i("material.specular", Shader::SPECULAR);
 			myMaterial->shader->SetUniform1f("material.shininess", myMaterial->shininess);
 
 			glBindVertexArray(VAO); // 绑定VAO

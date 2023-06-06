@@ -19,6 +19,13 @@ public:
 	void SetUniform1i(const char* paramNameString, int slot);
 
 public:
+	enum Slot
+	{
+		DIFFUSE,
+		SPECULAR
+	};
+
+public:
 	unsigned int id;
 
 private:

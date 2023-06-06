@@ -7,13 +7,13 @@
 class Material
 {
 public:
-	Material(Shader* _shader, unsigned int _diffuse, glm::vec3 _specular, glm::vec3 _ambient, float _shininess);
+	Material(Shader* _shader, unsigned int _diffuse, unsigned int _specular, glm::vec3 _ambient, float _shininess);
 	~Material() = default;
 
 public:
 	Shader* shader;
 	unsigned int diffuse; // 漫反射
-	glm::vec3 specular; // 镜面反射
+	unsigned int specular; // 镜面反射
 	glm::vec3 ambient; // 环境光
 	float shininess; // 镜面反射高光度
 };
