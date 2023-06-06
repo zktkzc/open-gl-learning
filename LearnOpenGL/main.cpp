@@ -280,6 +280,11 @@ int main()
 			glUniform3f(glGetUniformLocation(myShader->id, "lightColor"), 1.0f, 1.0f, 1.0f); // 手动设置纹理单元
 			glUniform3f(glGetUniformLocation(myShader->id, "cameraPos"), camera.Position.x, camera.Position.y, camera.Position.z); // 手动设置纹理单元
 
+			glUniform3f(glGetUniformLocation(myShader->id, "material.ambient"), 1.0f, 1.0f, 1.0f); // 手动设置纹理单元
+			glUniform3f(glGetUniformLocation(myShader->id, "material.diffuse"), 0, 0, 1.0f); // 手动设置纹理单元
+			glUniform3f(glGetUniformLocation(myShader->id, "material.specular"), 0, 1.0f, 0); // 手动设置纹理单元
+			glUniform1f(glGetUniformLocation(myShader->id, "material.shininess"), 64.0f); // 手动设置纹理单元
+
 			glBindVertexArray(VAO); // 绑定VAO
 
 			glDrawArrays(GL_TRIANGLES, 0, 36); // 绘制立方体, 36个顶点
