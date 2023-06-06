@@ -91,3 +91,8 @@ void Shader::SetUniform1f(const char* paramNameString, float param)
 {
 	glUniform1f(glGetUniformLocation(this->id, paramNameString), param);
 }
+
+void Shader::SetUniform1i(const char* paramNameString, int slot)
+{
+	glUniform1i(glGetUniformLocation(this->id, paramNameString), slot);
+}

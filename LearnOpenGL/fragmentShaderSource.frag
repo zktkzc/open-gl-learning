@@ -1,11 +1,12 @@
 #version 330 core
 in vec3 FragPos; // 片段在世界坐标系中的位置
 in vec3 Normal; // 片段的法线
+in vec2 TexCoord; // 片段的纹理坐标
 
 struct Material
 {
 	vec3 ambient; // 环境光照
-	vec3 diffuse; // 漫反射
+	sampler2D diffuse; // 漫反射贴图
 	vec3 specular; // 镜面反射
 	float shininess; // 镜面反射强度
 };
@@ -29,7 +30,8 @@ void main()
 	vec3 cameraVec = normalize(cameraPos - FragPos); // 摄像机方向, 从物体指向摄像机
 	float specularAmount = pow(max(dot(reflectVec, cameraVec), 0), material.shininess); // 计算镜面反射强度, 衰减指数为32，越大越亮，越小越暗
 	vec3 specular = material.specular * specularAmount * lightColor; // 镜面反射颜色
-	vec3 diffuse = material.diffuse * max(dot(lightDir, Normal), 0) * lightColor; // 漫反射颜色
-	vec3 ambient = material.ambient * ambientColor; // 环境光照颜色
+	vec3 diffuse = texture(material.diffuse, TexCoord).rgb * max(dot(lightDir, Normal), 0) * lightColor; // 漫反射颜色
+	// vec3 diffuse = texture(material.diffuse, TexCoord).rgb; // 漫反射颜色
+	vec3 ambient = texture(material.diffuse, TexCoord).rgb * ambientColor; // 环境光照颜色
 	FragColor = vec4((ambient + diffuse + specular) * objColor, 1.0); // 物体颜色 = 环境光照 + 漫反射 + 镜面反射
 }
