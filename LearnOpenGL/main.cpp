@@ -9,6 +9,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "Camera.h"
+#include "Material.h"
 
 #pragma region 模型数据
 // 顶点数组
@@ -206,6 +207,16 @@ int main()
 	Shader* myShader = new Shader("vertexShaderSource.vert", "fragmentShaderSource.frag");
 #pragma endregion
 
+#pragma region 创建材质
+	Material* myMaterial = new Material(
+		myShader,
+		glm::vec3(0, 0, 1.0f),
+		glm::vec3(0, 1.0f, 0),
+		glm::vec3(1.0f, 1.0f, 1.0f),
+		32.0f
+	);
+#pragma endregion
+
 #pragma region 初始化顶点数据，绑定VAO和VBO
 	// 生成一个顶点数组对象(Vertex Array Object, VAO)
 	unsigned int VAO;
@@ -280,10 +291,10 @@ int main()
 			glUniform3f(glGetUniformLocation(myShader->id, "lightColor"), 1.0f, 1.0f, 1.0f); // 手动设置纹理单元
 			glUniform3f(glGetUniformLocation(myShader->id, "cameraPos"), camera.Position.x, camera.Position.y, camera.Position.z); // 手动设置纹理单元
 
-			glUniform3f(glGetUniformLocation(myShader->id, "material.ambient"), 1.0f, 1.0f, 1.0f); // 手动设置纹理单元
-			glUniform3f(glGetUniformLocation(myShader->id, "material.diffuse"), 0, 0, 1.0f); // 手动设置纹理单元
-			glUniform3f(glGetUniformLocation(myShader->id, "material.specular"), 0, 1.0f, 0); // 手动设置纹理单元
-			glUniform1f(glGetUniformLocation(myShader->id, "material.shininess"), 64.0f); // 手动设置纹理单元
+			myMaterial->shader->SetUniform3f("material.ambient", myMaterial->ambient);
+			myMaterial->shader->SetUniform3f("material.diffuse", myMaterial->diffuse);
+			myMaterial->shader->SetUniform3f("material.specular", myMaterial->specular);
+			myMaterial->shader->SetUniform1f("material.shininess", myMaterial->shininess);
 
 			glBindVertexArray(VAO); // 绑定VAO
 

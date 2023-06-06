@@ -1,6 +1,6 @@
 #include "Shader.h"
 
-Shader::Shader(const char* veretexPath, const char* fragmentPath)
+Shader::Shader(const char* vertexPath, const char* fragmentPath)
 {
 	std::ifstream vertexFile; // 文件流
 	std::ifstream fragmentFile;
@@ -8,7 +8,7 @@ Shader::Shader(const char* veretexPath, const char* fragmentPath)
 	std::stringstream vertexSStream; // 字符串流
 	std::stringstream fragmentSStream;
 
-	vertexFile.open(veretexPath); // 打开文件
+	vertexFile.open(vertexPath); // 打开文件
 	fragmentFile.open(fragmentPath);
 
 	vertexFile.exceptions(std::ifstream::failbit | std::ifstream::badbit); // 设置异常标志位
@@ -80,4 +80,14 @@ Shader::Shader(const char* veretexPath, const char* fragmentPath)
 void Shader::use()
 {
 	glUseProgram(id); // 使用着色器程序
+}
+
+void Shader::SetUniform3f(const char* paramNameString, glm::vec3 param)
+{
+	glUniform3f(glGetUniformLocation(this->id, paramNameString), param.x, param.y, param.z);
+}
+
+void Shader::SetUniform1f(const char* paramNameString, float param)
+{
+	glUniform1f(glGetUniformLocation(this->id, paramNameString), param);
 }
