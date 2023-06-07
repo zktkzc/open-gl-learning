@@ -14,6 +14,9 @@ public:
 	glm::vec3 angles; // 欧拉角
 	glm::vec3 direction; // 方向
 	glm::vec3 color; // 颜色
+	float constant; // 常数项
+	float linear; // 一次项衰减值
+	float quadratic; // 二次项衰减值
 	float cosPhyInner = 0.9f; // 光锥的内角余弦值，最大张角
 	float cosPhyOuter = 0.85f; // 光锥的外角余弦值，最小张角
 };

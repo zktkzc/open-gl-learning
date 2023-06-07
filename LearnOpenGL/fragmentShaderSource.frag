@@ -33,6 +33,9 @@ struct LightSpot
 	vec3 pos; // 光源位置
 	vec3 color; // 光源颜色
 	vec3 dirToLight; // 光源方向
+	float constant; // 常数项
+	float linear; // 一次项
+	float quadratic; // 二次项
 	float cosPhyInner;
 	float cosPhyOuter;
 };
@@ -86,6 +89,40 @@ vec3 CalcLightPoint(LightPoint light, vec3 uNormal, vec3 dirToCamera)
 	return result;
 };
 
+vec3 CalcLightSpot(LightSpot light, vec3 uNormal, vec3 dirToCamera)
+{
+	// attenuation 衰减
+	float dist = length(light.pos - FragPos); // 光源到片段的距离
+	float attenuation = 1.0f / (light.constant + light.linear * dist + light.quadratic * dist * dist);
+	float spotRatio;
+	float cosTheta = dot(normalize(FragPos - light.pos), -light.dirToLight); // 光源方向与片段指向光源方向的夹角
+
+	if (cosTheta > light.cosPhyInner)
+	{
+		spotRatio = 1.0f;
+	}
+	else if (cosTheta > light.cosPhyOuter)
+	{
+		spotRatio = (cosTheta - light.cosPhyOuter) / (light.cosPhyInner - light.cosPhyOuter);
+	}
+	else
+	{
+		spotRatio = 0.0f;
+	}
+
+	// diffuse
+	float diffIntensity = max(dot(normalize(light.pos - FragPos), uNormal), 0.0f) * attenuation * spotRatio;
+	vec3 diffColor = diffIntensity * light.color * texture(material.diffuse, TexCoord).rgb;
+
+	// specular
+	vec3 R = normalize(reflect(-normalize(light.pos - FragPos), uNormal)); // 反射向量，从光源出发照向片段
+	float specIntensity = pow(max(dot(R, dirToCamera), 0.0f), material.shininess) * attenuation * spotRatio;
+	vec3 specColor = specIntensity * light.color * texture(material.specular, TexCoord).rgb;
+
+	vec3 result = diffColor + specColor;
+	return result;
+};
+
 void main()
 {
 	vec3 finalResult = vec3(0, 0, 0);
@@ -98,6 +135,8 @@ void main()
 	finalResult += CalcLightPoint(lightP1, uNormal, dirToCamera);
 	finalResult += CalcLightPoint(lightP2, uNormal, dirToCamera);
 	finalResult += CalcLightPoint(lightP3, uNormal, dirToCamera);
+
+	finalResult += CalcLightSpot(lightS, uNormal, dirToCamera);
 
 	FragColor = vec4(finalResult, 1.0f);
 }

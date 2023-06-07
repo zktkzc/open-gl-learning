@@ -107,6 +107,12 @@ LightPoint lightP3 = LightPoint(
 	glm::vec3(glm::radians(45.0f), glm::radians(45.0f), 0),
 	glm::vec3(1.0f, 1.0f, 1.0f)
 );
+
+LightSpot lightS = LightSpot(
+	glm::vec3(0, 8.0f, 0),
+	glm::vec3(glm::radians(90.0f), 0, 0),
+	glm::vec3(1.0f, 1.0f, 1.0f)
+);
 #pragma endregion
 
 #pragma region 处理键盘和鼠标输入
@@ -446,8 +452,29 @@ int main()
 #pragma endregion
 
 #pragma region LightSpot
-			// glUniform1f(glGetUniformLocation(myShader->id, "lightSpot.cosPhyInner"), light.cosPhyInner);
-			// glUniform1f(glGetUniformLocation(myShader->id, "lightSpot.cosPhyOuter"), light.cosPhyOuter);
+			glUniform3f(
+				glGetUniformLocation(myShader->id, "lightS.pos"),
+				lightS.position.x,
+				lightS.position.y,
+				lightS.position.z
+			); // 手动设置纹理单元
+			glUniform3f(
+				glGetUniformLocation(myShader->id, "lightS.color"),
+				lightS.color.x,
+				lightS.color.y,
+				lightS.color.z
+			); // 手动设置纹理单元
+			glUniform3f(
+				glGetUniformLocation(myShader->id, "lightS.dirToLight"),
+				lightS.direction.x,
+				lightS.direction.y,
+				lightS.direction.z
+			);
+			glUniform1f(glGetUniformLocation(myShader->id, "lightS.constant"), lightS.constant);
+			glUniform1f(glGetUniformLocation(myShader->id, "lightS.linear"), lightS.linear);
+			glUniform1f(glGetUniformLocation(myShader->id, "lightS.quadratic"), lightS.quadratic);
+			glUniform1f(glGetUniformLocation(myShader->id, "lightSpot.cosPhyInner"), lightS.cosPhyInner);
+			glUniform1f(glGetUniformLocation(myShader->id, "lightSpot.cosPhyOuter"), lightS.cosPhyOuter);
 #pragma endregion
 
 			glUniform3f(
