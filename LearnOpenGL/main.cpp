@@ -12,6 +12,7 @@
 #include "Material.h"
 #include "LightDirectional.h"
 #include "LightPoint.h"
+#include "LightSpot.h"
 
 #pragma region Ä£ÐÍÊý¾Ý
 // ¶¥µãÊý×é
@@ -80,11 +81,11 @@ Camera camera(glm::vec3(0, 0, 3.0f), 15.0f, 180.0f, glm::vec3(0, 1.0f, 0)); // ´
 #pragma endregion
 
 #pragma region ´´½¨¹âÔ´
-LightPoint light = LightPoint(
-	glm::vec3(1.0f, 1.0f, -1.0f),
-	glm::vec3(glm::radians(45.0f), glm::radians(45.0f), 0),
-	glm::vec3(10.0f, 10.0f, 10.0f)
-); // ´´½¨Ò»¸öÆ½ÐÐ¹â
+LightSpot light = LightSpot(
+	glm::vec3(0.0f, 5.0f, 0.0f),
+	glm::vec3(glm::radians(90.0f), 0, 0),
+	glm::vec3(1.0f, 1.0f, 1.0f)
+); // ´´½¨Ò»¸ö¾Û¹âµÆ¹âÔ´
 #pragma endregion
 
 #pragma region ´¦Àí¼üÅÌºÍÊó±êÊäÈë
@@ -329,9 +330,14 @@ int main()
 				light.direction.y,
 				light.direction.z
 			); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
-			glUniform1f(glGetUniformLocation(myShader->id, "lightPoint.constant"), light.constant); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
-			glUniform1f(glGetUniformLocation(myShader->id, "lightPoint.linear"), light.linear); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
-			glUniform1f(glGetUniformLocation(myShader->id, "lightPoint.quadratic"), light.quadratic); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
+
+			// glUniform1f(glGetUniformLocation(myShader->id, "lightPoint.constant"), light.constant); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
+			// glUniform1f(glGetUniformLocation(myShader->id, "lightPoint.linear"), light.linear); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
+			// glUniform1f(glGetUniformLocation(myShader->id, "lightPoint.quadratic"), light.quadratic); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
+
+			glUniform1f(glGetUniformLocation(myShader->id, "lightSpot.cosPhyInner"), light.cosPhyInner);
+			glUniform1f(glGetUniformLocation(myShader->id, "lightSpot.cosPhyOuter"), light.cosPhyOuter);
+
 			glUniform3f(
 				glGetUniformLocation(myShader->id, "cameraPos"),
 				camera.Position.x,

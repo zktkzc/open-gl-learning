@@ -18,8 +18,15 @@ struct LightPoint
 	float quadratic; // 二次项
 };
 
+struct LightSpot
+{
+	float cosPhyInner;
+	float cosPhyOuter;
+};
+
 uniform Material material; // 物体材质
 uniform LightPoint lightPoint; // 点光源
+uniform LightSpot lightSpot; // 聚光灯光源
 
 // uniform sampler2D ourTexture;
 // uniform sampler2D ourFace; 
@@ -44,5 +51,33 @@ void main()
 	vec3 diffuse = texture(material.diffuse, TexCoord).rgb * max(dot(lightDir, Normal), 0) * lightColor; // 漫反射颜色
 	// vec3 diffuse = texture(material.diffuse, TexCoord).rgb; // 漫反射颜色
 	vec3 ambient = texture(material.diffuse, TexCoord).rgb * ambientColor; // 环境光照颜色
-	FragColor = vec4((ambient + (diffuse + specular) * attenuation) * objColor, 1.0); // 物体颜色 = 环境光照 + 漫反射 + 镜面反射
+	float cosTheta = dot(normalize(FragPos - lightPos), -1 * lightDirUniform); // 计算光源方向和光源方向的夹角
+	// if (cosTheta > lightSpot.cosPhy)
+	// {
+	// 	FragColor = vec4((ambient + diffuse + specular) * objColor, 1.0); // 物体颜色 = 环境光照 + 漫反射 + 镜面反射
+	// }
+	// else
+	// {
+	// 	FragColor = vec4(ambient * objColor, 1.0); // 物体颜色 = 环境光照 + 漫反射 + 镜面反射
+	// }
+
+	float spotRatio;
+	if (cosTheta > lightSpot.cosPhyInner)
+	{
+		// inside
+		spotRatio = 1.0f;
+	}
+	else if (cosTheta > lightSpot.cosPhyOuter)
+	{
+		// middle
+		//spotRatio = 0.5f;
+		spotRatio = (cosTheta - lightSpot.cosPhyOuter) / (lightSpot.cosPhyInner - lightSpot.cosPhyOuter); // 0.0 ~ 1.0
+	}
+	else
+	{
+		// outside
+		spotRatio = 0;
+	}
+
+	FragColor = vec4(((ambient + diffuse + specular) * objColor) * spotRatio, 1.0); // 物体颜色 = 环境光照 + 漫反射 + 镜面反射
 }
