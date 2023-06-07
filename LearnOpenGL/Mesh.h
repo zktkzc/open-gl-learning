@@ -2,6 +2,7 @@
 #include <glm/glm.hpp>
 #include <string>
 #include <vector>
+#include <GL/glew.h>
 
 #include "Shader.h"
 
