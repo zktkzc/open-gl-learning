@@ -11,6 +11,7 @@
 #include "Camera.h"
 #include "Material.h"
 #include "LightDirectional.h"
+#include "LightPoint.h"
 
 #pragma region Ä£ÐÍÊý¾Ý
 // ¶¥µãÊý×é
@@ -79,10 +80,10 @@ Camera camera(glm::vec3(0, 0, 3.0f), 15.0f, 180.0f, glm::vec3(0, 1.0f, 0)); // ´
 #pragma endregion
 
 #pragma region ´´½¨¹âÔ´
-LightDirectional light = LightDirectional(
-	glm::vec3(10.0f, 10.0f, -5.0f),
+LightPoint light = LightPoint(
+	glm::vec3(1.0f, 1.0f, -1.0f),
 	glm::vec3(glm::radians(45.0f), glm::radians(45.0f), 0),
-	glm::vec3(1.0f, 0, 0)
+	glm::vec3(10.0f, 10.0f, 10.0f)
 ); // ´´½¨Ò»¸öÆ½ÐÐ¹â
 #pragma endregion
 
@@ -290,15 +291,53 @@ int main()
 
 			// glUniform1i(glGetUniformLocation(myShader->id, "ourTexture"), 0); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
 			// glUniform1i(glGetUniformLocation(myShader->id, "ourFace"), 3); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
-			glUniformMatrix4fv(glGetUniformLocation(myShader->id, "modelMat"), 1, GL_FALSE, glm::value_ptr(modelMat)); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
-			glUniformMatrix4fv(glGetUniformLocation(myShader->id, "viewMat"), 1, GL_FALSE, glm::value_ptr(viewMat)); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
-			glUniformMatrix4fv(glGetUniformLocation(myShader->id, "projectionMat"), 1, GL_FALSE, glm::value_ptr(projectionMat)); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
+			glUniformMatrix4fv(
+				glGetUniformLocation(myShader->id, "modelMat"),
+				1,
+				GL_FALSE,
+				glm::value_ptr(modelMat)
+			); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
+			glUniformMatrix4fv(
+				glGetUniformLocation(myShader->id, "viewMat"),
+				1,
+				GL_FALSE,
+				glm::value_ptr(viewMat)
+			); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
+			glUniformMatrix4fv(
+				glGetUniformLocation(myShader->id, "projectionMat"),
+				1,
+				GL_FALSE,
+				glm::value_ptr(projectionMat)
+			); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
 			glUniform3f(glGetUniformLocation(myShader->id, "objColor"), 1.0f, 1.0f, 1.0f); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
 			glUniform3f(glGetUniformLocation(myShader->id, "ambientColor"), 0.3f, 0.3f, 0.3f); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
-			glUniform3f(glGetUniformLocation(myShader->id, "lightPos"), light.position.x, light.position.y, light.position.z); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
-			glUniform3f(glGetUniformLocation(myShader->id, "lightColor"), light.color.x, light.color.y, light.color.z); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
-			glUniform3f(glGetUniformLocation(myShader->id, "lightDir"), light.direction.x, light.direction.y, light.direction.z); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
-			glUniform3f(glGetUniformLocation(myShader->id, "cameraPos"), camera.Position.x, camera.Position.y, camera.Position.z); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
+			glUniform3f(
+				glGetUniformLocation(myShader->id, "lightPos"),
+				light.position.x,
+				light.position.y,
+				light.position.z
+			); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
+			glUniform3f(
+				glGetUniformLocation(myShader->id, "lightColor"),
+				light.color.x,
+				light.color.y,
+				light.color.z
+			); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
+			glUniform3f(
+				glGetUniformLocation(myShader->id, "lightDirUniform"),
+				light.direction.x,
+				light.direction.y,
+				light.direction.z
+			); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
+			glUniform1f(glGetUniformLocation(myShader->id, "lightPoint.constant"), light.constant); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
+			glUniform1f(glGetUniformLocation(myShader->id, "lightPoint.linear"), light.linear); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
+			glUniform1f(glGetUniformLocation(myShader->id, "lightPoint.quadratic"), light.quadratic); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
+			glUniform3f(
+				glGetUniformLocation(myShader->id, "cameraPos"),
+				camera.Position.x,
+				camera.Position.y,
+				camera.Position.z
+			); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
 
 			myMaterial->shader->SetUniform3f("material.ambient", myMaterial->ambient);
 			//myMaterial->shader->SetUniform3f("material.diffuse", myMaterial->diffuse);
