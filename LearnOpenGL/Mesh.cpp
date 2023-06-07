@@ -37,8 +37,8 @@ void Mesh::Draw(Shader* _shader)
 	}
 
 	glBindVertexArray(VAO); // 绑定顶点数组对象
-	glDrawArrays(GL_TRIANGLES, 0, 36); // 绘制网格
-	//glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0); // 绘制网格
+	// glDrawArrays(GL_TRIANGLES, 0, 36); // 绘制网格
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0); // 绘制网格
 	glBindVertexArray(0); // 解绑顶点数组对象
 	glActiveTexture(GL_TEXTURE0); // 激活纹理单元0
 }
@@ -58,14 +58,14 @@ void Mesh::SetupMesh()
 		GL_STATIC_DRAW
 	); // 将顶点数据复制到顶点缓冲对象中
 
-	// glGenBuffers(1, &EBO); // 生成索引缓冲对象
-	// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); // 绑定索引缓冲对象
-	// glBufferData(
-	// 	GL_ELEMENT_ARRAY_BUFFER,
-	// 	indices.size() * sizeof(unsigned int),
-	// 	&indices[0],
-	// 	GL_STATIC_DRAW
-	// ); // 将索引数据复制到索引缓冲对象中
+	glGenBuffers(1, &EBO); // 生成索引缓冲对象
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); // 绑定索引缓冲对象
+	glBufferData(
+		GL_ELEMENT_ARRAY_BUFFER,
+		indices.size() * sizeof(unsigned int),
+		&indices[0],
+		GL_STATIC_DRAW
+	); // 将索引数据复制到索引缓冲对象中
 
 	glVertexAttribPointer(
 		0,

@@ -13,6 +13,7 @@ class Model
 public:
 	Model(std::string path);
 	~Model() = default;
+	void draw(Shader* _shader);
 
 private:
 	void load_model(std::string path);

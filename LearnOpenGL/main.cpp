@@ -284,7 +284,7 @@ int main(int argc, char* argv[])
 	// glVertexAttribPointer(8, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (GLvoid*)(6 * sizeof(float))); // 解析纹理法线数据
 	// glEnableVertexAttribArray(8); // 启用顶点属性
 
-	Mesh cube(vertices); // 创建立方体网格
+	// Mesh cube(vertices); // 创建立方体网格
 	Model model(exePath.substr(0, exePath.find_last_of('\\')) + "\\model\\nanosuit.obj"); // 创建模型
 #pragma endregion
 
@@ -503,7 +503,9 @@ int main(int argc, char* argv[])
 
 			// glDrawArrays(GL_TRIANGLES, 0, 36); // 绘制立方体, 36个顶点
 
-			cube.Draw(myMaterial->shader); // 绘制立方体
+			// cube.Draw(myMaterial->shader); // 绘制立方体
+
+			model.draw(myMaterial->shader); // 绘制模型
 		}
 
 		// 交换颜色缓冲

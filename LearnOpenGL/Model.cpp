@@ -27,10 +27,10 @@ void Model::process_node(aiNode* node, const aiScene* scene)
 {
 	// std::cout << "节点名称：" << node->mName.data << std::endl;
 
-	for (unsigned int i = 0; i < node->mChildren; i++)
+	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* curMesh = scene->mMeshes[node->mMeshes[i]]; // 处理网格
-		//meshes.push_back();
+		meshes.push_back(process_mesh(curMesh, scene));
 	}
 
 	for (unsigned int i = 0; i < node->mNumChildren; ++i)
@@ -76,10 +76,21 @@ Mesh Model::process_mesh(aiMesh* mesh, const aiScene* scene)
 	}
 
 	// 处理索引
-	for (unsigned int i = 0; i < mesh->mFaces->mNumIndices; i++)
+	for (unsigned int i = 0; i < mesh->mNumFaces; i++)
 	{
-		tmpIndices.push_back(mesh->mFaces->mIndices[i]);
+		for (unsigned int j = 0; j < mesh->mFaces[i].mNumIndices; j++)
+		{
+			tmpIndices.push_back(mesh->mFaces[i].mIndices[j]);
+		}
 	}
 
 	return Mesh(tmpVertices, tmpIndices, {});
+}
+
+void Model::draw(Shader* _shader)
+{
+	for (unsigned int i = 0; i < meshes.size(); i++)
+	{
+		meshes[i].Draw(_shader);
+	}
 }
