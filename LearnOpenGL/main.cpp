@@ -13,6 +13,7 @@
 #include "LightDirectional.h"
 #include "LightPoint.h"
 #include "LightSpot.h"
+#include "Mesh.h"
 
 #pragma region 模型数据
 // 顶点数组
@@ -258,26 +259,28 @@ int main()
 
 #pragma region 初始化顶点数据，绑定VAO和VBO
 	// 生成一个顶点数组对象(Vertex Array Object, VAO)
-	unsigned int VAO;
-	glGenVertexArrays(1, &VAO);
+	// unsigned int VAO;
+	// glGenVertexArrays(1, &VAO);
 	// 绑定VAO
-	glBindVertexArray(VAO);
+	// glBindVertexArray(VAO);
 
 	// 生成一个顶点缓冲对象(Vertex Buffer Objects, VBO)
-	unsigned int VBO;
-	glGenBuffers(1, &VBO);
+	// unsigned int VBO;
+	// glGenBuffers(1, &VBO);
 	// 把新创建的缓冲绑定到GL_ARRAY_BUFFER目标上
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	// glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	// 把用户定义的数据复制到当前绑定缓冲的函数
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	// glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	// 设置顶点属性指针
-	glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (GLvoid*)0); // 解析顶点数据
-	glEnableVertexAttribArray(6); // 启用顶点属性
-	glVertexAttribPointer(7, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (GLvoid*)(3 * sizeof(float))); // 解析纹理法线数据
-	glEnableVertexAttribArray(7); // 启用顶点属性
-	glVertexAttribPointer(8, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (GLvoid*)(6 * sizeof(float))); // 解析纹理法线数据
-	glEnableVertexAttribArray(8); // 启用顶点属性
+	// glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (GLvoid*)0); // 解析顶点数据
+	// glEnableVertexAttribArray(6); // 启用顶点属性
+	// glVertexAttribPointer(7, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (GLvoid*)(3 * sizeof(float))); // 解析纹理法线数据
+	// glEnableVertexAttribArray(7); // 启用顶点属性
+	// glVertexAttribPointer(8, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (GLvoid*)(6 * sizeof(float))); // 解析纹理法线数据
+	// glEnableVertexAttribArray(8); // 启用顶点属性
+
+	Mesh cube(vertices);
 #pragma endregion
 
 #pragma region 加载纹理
@@ -306,16 +309,16 @@ int main()
 
 		viewMat = camera.GetViewMatrix(); // 获取观察矩阵
 
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 1; i++)
 		{
 			modelMat = glm::translate(glm::mat4(1.0f), cubePositions[i]); // 位移
 
 			myShader->use(); // 使用着色器程序
 
-			glActiveTexture(GL_TEXTURE0); // 激活纹理单元
-			glBindTexture(GL_TEXTURE_2D, myMaterial->diffuse); // 绑定纹理
-			glActiveTexture(GL_TEXTURE0 + Shader::SPECULAR); // 激活纹理单元
-			glBindTexture(GL_TEXTURE_2D, myMaterial->specular); // 绑定纹理
+			// glActiveTexture(GL_TEXTURE0); // 激活纹理单元
+			// glBindTexture(GL_TEXTURE_2D, myMaterial->diffuse); // 绑定纹理
+			// glActiveTexture(GL_TEXTURE0 + Shader::SPECULAR); // 激活纹理单元
+			// glBindTexture(GL_TEXTURE_2D, myMaterial->specular); // 绑定纹理
 
 			// glUniform1i(glGetUniformLocation(myShader->id, "ourTexture"), 0); // 手动设置纹理单元
 			// glUniform1i(glGetUniformLocation(myShader->id, "ourFace"), 3); // 手动设置纹理单元
@@ -491,9 +494,11 @@ int main()
 			myMaterial->shader->SetUniform1i("material.specular", Shader::SPECULAR);
 			myMaterial->shader->SetUniform1f("material.shininess", myMaterial->shininess);
 
-			glBindVertexArray(VAO); // 绑定VAO
+			// glBindVertexArray(VAO); // 绑定VAO
 
-			glDrawArrays(GL_TRIANGLES, 0, 36); // 绘制立方体, 36个顶点
+			// glDrawArrays(GL_TRIANGLES, 0, 36); // 绘制立方体, 36个顶点
+
+			cube.Draw(myMaterial->shader); // 绘制立方体
 		}
 
 		// 交换颜色缓冲

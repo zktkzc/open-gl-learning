@@ -1,10 +1,20 @@
 #include "Mesh.h"
 
+Mesh::Mesh(float vertices[])
+{
+	this->vertices.resize(36);
+	memcpy(&this->vertices[0], vertices, sizeof(float) * 36 * 8);
+
+	SetupMesh();
+}
+
 Mesh::Mesh(std::vector<Vertex> _vertices, std::vector<unsigned int> _indices, std::vector<Texture> _textures)
 {
 	this->vertices = _vertices;
 	this->indices = _indices;
 	this->textures = _textures;
+
+	SetupMesh();
 }
 
 // 绘制贴图
@@ -24,12 +34,13 @@ void Mesh::Draw(Shader* _shader)
 			glBindTexture(GL_TEXTURE_2D, textures[i].id); // 绑定纹理
 			_shader->SetUniform1i("material.specular", 1); // 设置uniform变量
 		}
-
-		glBindVertexArray(VAO); // 绑定顶点数组对象
-		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0); // 绘制网格
-		glBindVertexArray(0); // 解绑顶点数组对象
-		glActiveTexture(GL_TEXTURE0); // 激活纹理单元0
 	}
+
+	glBindVertexArray(VAO); // 绑定顶点数组对象
+	glDrawArrays(GL_TRIANGLES, 0, 36); // 绘制网格
+	//glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0); // 绘制网格
+	glBindVertexArray(0); // 解绑顶点数组对象
+	glActiveTexture(GL_TEXTURE0); // 激活纹理单元0
 }
 
 // 初始化网格
@@ -47,14 +58,14 @@ void Mesh::SetupMesh()
 		GL_STATIC_DRAW
 	); // 将顶点数据复制到顶点缓冲对象中
 
-	glGenBuffers(1, &EBO); // 生成索引缓冲对象
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); // 绑定索引缓冲对象
-	glBufferData(
-		GL_ELEMENT_ARRAY_BUFFER,
-		indices.size() * sizeof(unsigned int),
-		&indices[0],
-		GL_STATIC_DRAW
-	); // 将索引数据复制到索引缓冲对象中
+	// glGenBuffers(1, &EBO); // 生成索引缓冲对象
+	// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); // 绑定索引缓冲对象
+	// glBufferData(
+	// 	GL_ELEMENT_ARRAY_BUFFER,
+	// 	indices.size() * sizeof(unsigned int),
+	// 	&indices[0],
+	// 	GL_STATIC_DRAW
+	// ); // 将索引数据复制到索引缓冲对象中
 
 	glVertexAttribPointer(
 		0,
@@ -71,7 +82,7 @@ void Mesh::SetupMesh()
 		GL_FLOAT,
 		GL_FALSE,
 		sizeof(Vertex),
-		(void*)3
+		(void*)(3 * sizeof(GL_FLOAT))
 	); // 设置顶点属性指针
 	glEnableVertexAttribArray(1); // 启用顶点属性
 	glVertexAttribPointer(
@@ -80,7 +91,7 @@ void Mesh::SetupMesh()
 		GL_FLOAT,
 		GL_FALSE,
 		sizeof(Vertex),
-		(void*)6
+		(void*)(6 * sizeof(GL_FLOAT))
 	); // 设置顶点属性指针
 	glEnableVertexAttribArray(2); // 启用顶点属性
 }

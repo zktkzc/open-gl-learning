@@ -25,6 +25,7 @@ struct Texture
 class Mesh
 {
 public:
+	Mesh(float vertices[]);
 	Mesh(std::vector<Vertex> _vertices, std::vector<unsigned int> _indices, std::vector<Texture> _textures);
 	~Mesh() = default;
 	void Draw(Shader* _shader);
