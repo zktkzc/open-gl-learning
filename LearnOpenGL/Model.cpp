@@ -18,5 +18,23 @@ void Model::load_model(std::string path)
 		return;
 	}
 	directory = path.substr(0, path.find_last_of('\\')); // 获取模型所在目录
-	std::cout << "Success! Model::load_model: directory = " << directory << std::endl;
+	// std::cout << "Success! Model::load_model: directory = " << directory << std::endl;
+
+	process_node(scene->mRootNode, scene); // 处理根节点
+}
+
+void Model::process_node(aiNode* node, const aiScene* scene)
+{
+	// std::cout << "节点名称：" << node->mName.data << std::endl;
+
+	for (unsigned int i = 0; i < node->mChildren; i++)
+	{
+		aiMesh* curMesh = scene->mMeshes[node->mMeshes[i]]; // 处理网格
+		// meshes.push_back();
+	}
+
+	for (unsigned int i = 0; i < node->mNumChildren; ++i)
+	{
+		process_node(node->mChildren[i], scene); // 递归处理子节点
+	}
 }

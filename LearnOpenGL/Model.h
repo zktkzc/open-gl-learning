@@ -16,6 +16,7 @@ public:
 
 private:
 	void load_model(std::string path);
+	void process_node(aiNode* node, const aiScene* scene);
 
 public:
 	std::vector<Mesh> meshes; // Íø¸ñÊý×é
