@@ -81,9 +81,9 @@ Camera camera(glm::vec3(0, 0, 3.0f), 15.0f, 180.0f, glm::vec3(0, 1.0f, 0)); // ´
 #pragma endregion
 
 #pragma region ´´½¨¹âÔ´
-LightSpot light = LightSpot(
+LightDirectional light = LightDirectional(
 	glm::vec3(0.0f, 5.0f, 0.0f),
-	glm::vec3(glm::radians(90.0f), 0, 0),
+	glm::vec3(glm::radians(45.0f), glm::radians(45.0f), 0),
 	glm::vec3(1.0f, 1.0f, 1.0f)
 ); // ´´½¨Ò»¸ö¾Û¹âµÆ¹âÔ´
 #pragma endregion
@@ -312,31 +312,35 @@ int main()
 			); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
 			glUniform3f(glGetUniformLocation(myShader->id, "objColor"), 1.0f, 1.0f, 1.0f); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
 			glUniform3f(glGetUniformLocation(myShader->id, "ambientColor"), 0.3f, 0.3f, 0.3f); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
+
+			// LightDirectional
 			glUniform3f(
-				glGetUniformLocation(myShader->id, "lightPos"),
+				glGetUniformLocation(myShader->id, "lightDirectional.pos"),
 				light.position.x,
 				light.position.y,
 				light.position.z
 			); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
 			glUniform3f(
-				glGetUniformLocation(myShader->id, "lightColor"),
+				glGetUniformLocation(myShader->id, "lightDirectional.color"),
 				light.color.x,
 				light.color.y,
 				light.color.z
 			); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
 			glUniform3f(
-				glGetUniformLocation(myShader->id, "lightDirUniform"),
+				glGetUniformLocation(myShader->id, "lightDirectional.dirToLight"),
 				light.direction.x,
 				light.direction.y,
 				light.direction.z
 			); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
 
+			// LightPoint
 			// glUniform1f(glGetUniformLocation(myShader->id, "lightPoint.constant"), light.constant); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
 			// glUniform1f(glGetUniformLocation(myShader->id, "lightPoint.linear"), light.linear); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
 			// glUniform1f(glGetUniformLocation(myShader->id, "lightPoint.quadratic"), light.quadratic); // ÊÖ¶¯ÉèÖÃÎÆÀíµ¥Ôª
 
-			glUniform1f(glGetUniformLocation(myShader->id, "lightSpot.cosPhyInner"), light.cosPhyInner);
-			glUniform1f(glGetUniformLocation(myShader->id, "lightSpot.cosPhyOuter"), light.cosPhyOuter);
+			// LightSpot
+			// glUniform1f(glGetUniformLocation(myShader->id, "lightSpot.cosPhyInner"), light.cosPhyInner);
+			// glUniform1f(glGetUniformLocation(myShader->id, "lightSpot.cosPhyOuter"), light.cosPhyOuter);
 
 			glUniform3f(
 				glGetUniformLocation(myShader->id, "cameraPos"),

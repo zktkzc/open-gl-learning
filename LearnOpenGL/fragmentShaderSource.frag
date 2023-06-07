@@ -11,6 +11,13 @@ struct Material
 	float shininess; // 镜面反射强度
 };
 
+struct LightDirectional
+{
+	vec3 pos; // 光源位置
+	vec3 color; // 光源颜色
+	vec3 dirToLight; // 光源方向
+};
+
 struct LightPoint
 {
 	float constant; // 常数项
@@ -25,6 +32,7 @@ struct LightSpot
 };
 
 uniform Material material; // 物体材质
+uniform LightDirectional lightDirectional; // 平行光光源
 uniform LightPoint lightPoint; // 点光源
 uniform LightSpot lightSpot; // 聚光灯光源
 
@@ -32,52 +40,31 @@ uniform LightSpot lightSpot; // 聚光灯光源
 // uniform sampler2D ourFace; 
 uniform vec3 objColor; // 物体颜色
 uniform vec3 ambientColor; // 环境光照
-uniform vec3 lightPos; // 光源位置
-uniform vec3 lightDirUniform; // 光源方向
-uniform vec3 lightColor; // 光源颜色
 uniform vec3 cameraPos; // 摄像机位置
 
 out vec4 FragColor; // 输出颜色到渲染缓冲
 
+vec3 CalcLightDirectional(LightDirectional light, vec3 uNormal, vec3 dirToCamera)
+{
+	// diffuse
+	float diffIntensity = max(dot(light.dirToLight, uNormal), 0.0f);
+	vec3 diffColor = diffIntensity * light.color * texture(material.diffuse, TexCoord).rgb;
+
+	// specular
+	vec3 R = normalize(reflect(-light.dirToLight, uNormal)); // 反射向量，从光源出发照向片段
+	float specIntensity = pow(max(dot(R, dirToCamera), 0.0f), material.shininess);
+	vec3 specColor = specIntensity * light.color * texture(material.specular, TexCoord).rgb;
+
+	vec3 result = diffColor + specColor;
+	return result;
+}
+
 void main()
 {
-	float dist = length(lightPos - FragPos); // 计算光源和片段之间的距离
-	float attenuation = 1.0 / (lightPoint.constant + lightPoint.linear * dist + lightPoint.quadratic * (dist * dist)); // 计算衰减系数
-	vec3 lightDir = normalize(lightPos - FragPos); // 光源方向, 从物体指向光源
-	vec3 reflectVec = reflect(-lightDir, Normal); // 计算反射向量, 光线从物体指向光源, 法向量指向物体外部, 所以这里需要取反
-	vec3 cameraVec = normalize(cameraPos - FragPos); // 摄像机方向, 从物体指向摄像机
-	float specularAmount = pow(max(dot(reflectVec, cameraVec), 0), material.shininess); // 计算镜面反射强度, 衰减指数为32，越大越亮，越小越暗
-	vec3 specular = texture(material.specular, TexCoord).rgb * specularAmount * lightColor; // 镜面反射颜色
-	vec3 diffuse = texture(material.diffuse, TexCoord).rgb * max(dot(lightDir, Normal), 0) * lightColor; // 漫反射颜色
-	// vec3 diffuse = texture(material.diffuse, TexCoord).rgb; // 漫反射颜色
-	vec3 ambient = texture(material.diffuse, TexCoord).rgb * ambientColor; // 环境光照颜色
-	float cosTheta = dot(normalize(FragPos - lightPos), -1 * lightDirUniform); // 计算光源方向和光源方向的夹角
-	// if (cosTheta > lightSpot.cosPhy)
-	// {
-	// 	FragColor = vec4((ambient + diffuse + specular) * objColor, 1.0); // 物体颜色 = 环境光照 + 漫反射 + 镜面反射
-	// }
-	// else
-	// {
-	// 	FragColor = vec4(ambient * objColor, 1.0); // 物体颜色 = 环境光照 + 漫反射 + 镜面反射
-	// }
+	vec3 finalResult = vec3(0, 0, 0);
+	vec3 uNormal = normalize(Normal); // 片段单位法向量
+	vec3 dirToCamera = normalize(cameraPos - FragPos); // 片段指向摄像机的方向向量
+	finalResult = CalcLightDirectional(lightDirectional, uNormal, dirToCamera);
 
-	float spotRatio;
-	if (cosTheta > lightSpot.cosPhyInner)
-	{
-		// inside
-		spotRatio = 1.0f;
-	}
-	else if (cosTheta > lightSpot.cosPhyOuter)
-	{
-		// middle
-		//spotRatio = 0.5f;
-		spotRatio = (cosTheta - lightSpot.cosPhyOuter) / (lightSpot.cosPhyInner - lightSpot.cosPhyOuter); // 0.0 ~ 1.0
-	}
-	else
-	{
-		// outside
-		spotRatio = 0;
-	}
-
-	FragColor = vec4(((ambient + diffuse + specular) * objColor) * spotRatio, 1.0); // 物体颜色 = 环境光照 + 漫反射 + 镜面反射
+	FragColor = vec4(finalResult, 1.0f);
 }
