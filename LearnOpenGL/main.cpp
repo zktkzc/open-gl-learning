@@ -14,6 +14,7 @@
 #include "LightPoint.h"
 #include "LightSpot.h"
 #include "Mesh.h"
+#include "Model.h"
 
 #pragma region 模型数据
 // 顶点数组
@@ -205,8 +206,11 @@ unsigned int LoadImageToGPU(const char* filename, GLint internalFormat, GLenum f
 	return TexBuffer;
 }
 
-int main()
+int main(int argc, char* argv[])
 {
+	std::string exePath = argv[0]; // 获取exe路径
+	// std::cout << exePath.substr(0, exePath.find_last_of('\\')) + "\\model\\nanosuit.obj" << std::endl;
+
 #pragma region 初始化GLFW，配置GLFW，创建窗口
 	// 初始化GLFW
 	glfwInit();
@@ -280,7 +284,8 @@ int main()
 	// glVertexAttribPointer(8, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (GLvoid*)(6 * sizeof(float))); // 解析纹理法线数据
 	// glEnableVertexAttribArray(8); // 启用顶点属性
 
-	Mesh cube(vertices);
+	Mesh cube(vertices); // 创建立方体网格
+	Model model(exePath.substr(0, exePath.find_last_of('\\')) + "\\model\\nanosuit.obj"); // 创建模型
 #pragma endregion
 
 #pragma region 加载纹理
